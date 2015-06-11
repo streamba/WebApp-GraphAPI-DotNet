@@ -1,0 +1,56 @@
+﻿@using Microsoft.Azure.ActiveDirectory.GraphClient
+@model IList<AppRoleAssignment>
+
+@{
+    ViewBag.Title = "GetRoleAsignments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>GetRoleAsignments</h2>
+<table id="directoryObjects" class="table table-bordered table-striped">
+    <tr>
+        <th>
+            ObjectId
+        </th>
+        <th>
+            Id
+        </th>
+        <th>
+            ResourceDisplayName
+        </th>
+        <th>
+            ResourceId
+        </th>
+        <th>
+            CreationTimestamp
+        </th>
+    </tr>
+    @foreach (var assignment in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => assignment.ObjectId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => assignment.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => assignment.ResourceDisplayName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => assignment.ResourceId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => assignment.CreationTimestamp)
+            </td>
+        </tr>
+    }
+</table>
+
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>
+@if (ViewBag.ErrorMessage == "AuthorizationRequired")
+{
+    <p>You have to sign-in. Click @Html.ActionLink("here", "GetRoleAsignments", "Users", new { reauth = true }, null) to sign-in.</p>
+}

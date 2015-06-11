@@ -366,6 +366,56 @@ namespace WebAppGraphAPI.Controllers
             return View(reports);
         }
 
+        public async Task<ActionResult> GetRoleAssignments(string objectId)
+        {
+            IList<AppRoleAssignment> roleAssignments = new List<AppRoleAssignment>();
+
+            try
+            {
+                ActiveDirectoryClient client = AuthenticationHelper.GetActiveDirectoryClient();
+
+                IUser user = await client.Users.GetByObjectId(objectId).ExecuteAsync();
+                var userFetcher = (IUserFetcher)user;
+
+                IPagedCollection<IAppRoleAssignment> pagedCollection = await userFetcher.AppRoleAssignments.ExecuteAsync();
+                do
+                {
+                    List<IAppRoleAssignment> roleAssignmentObjects = pagedCollection.CurrentPage.ToList();
+                    foreach (IDirectoryObject roleAssignmentObject in roleAssignmentObjects)
+                    {
+                        if (roleAssignmentObject is AppRoleAssignment)
+                        {
+                            var roleAssignment = roleAssignmentObject as AppRoleAssignment;
+                            roleAssignments.Add(roleAssignment);
+                        }
+                    }
+                    pagedCollection = await pagedCollection.GetNextPageAsync();
+                } while (pagedCollection != null);
+            }
+            catch (Exception e)
+            {
+                if (Request.QueryString["reauth"] == "True")
+                {
+                    //
+                    // Send an OpenID Connect sign-in request to get a new set of tokens.
+                    // If the user still has a valid session with Azure AD, they will not be prompted for their credentials.
+                    // The OpenID Connect middleware will return to this controller after the sign-in response has been handled.
+                    //
+                    HttpContext.GetOwinContext()
+                        .Authentication.Challenge(OpenIdConnectAuthenticationDefaults.AuthenticationType);
+                }
+
+                //
+                // The user needs to re-authorize.  Show them a message to that effect.
+                //
+                ViewBag.ErrorMessage = "AuthorizationRequired";
+                return View();
+            }
+
+            return View(roleAssignments);
+        }
+
+
         public async Task<ActionResult> ShowThumbnail(string id)
         {
             try

@@ -43,6 +43,7 @@
                 @Html.ActionLink("Delete", "Delete", new { objectId = item.ObjectId })  <br />
                 @Html.ActionLink("GroupMembership", "GetGroups", new { objectId = item.ObjectId }) <br />
                 @Html.ActionLink("DirectReports", "GetDirectReports", new { objectId = item.ObjectId}) <br />
+                @Html.ActionLink("RoleAssignments", "GetRoleAssignments", new { objectId = item.ObjectId }) <br />
             </td>
         </tr>
     }

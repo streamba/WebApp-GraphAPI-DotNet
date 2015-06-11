@@ -1,7 +1,12 @@
 ﻿@using Microsoft.Azure.ActiveDirectory.GraphClient
-@model IEnumerable<DirectoryRole>
+@model IEnumerable<AppRole>
 
 <h2>/Roles</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
 <table id="directoryObjects" class="table table-bordered table-striped">
     <tr>
         <th>
@@ -11,13 +16,21 @@
             Description
         </th>
         <th>
-            ObjectId
+            AllowedMemberTypes
         </th>
-        <th />
+        <th>
+            Id
+        </th>
+        <th>
+            Value
+        </th>
+        <th>
+            IsEnabled
+        </th>
     </tr>
     @foreach (var item in Model)
     {
-        var role = item as DirectoryRole;
+        var role = item as AppRole;
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => role.DisplayName)
@@ -26,10 +39,19 @@
                 @Html.DisplayFor(modelItem => role.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => role.ObjectId)
+                @Html.DisplayFor(modelItem => role.AllowedMemberTypes)
             </td>
             <td>
-                @Html.ActionLink("Details", "Details", new { objectId = item.ObjectId }) <br />
+                @Html.DisplayFor(modelItem => role.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => role.Value)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => role.IsEnabled)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", new { objectId = item.Id }) <br />
             </td>
         </tr>
     }
